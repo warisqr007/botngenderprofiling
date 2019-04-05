@@ -11,27 +11,26 @@ class ModelEvaluator:
         self.dev_accuracies = []
         self.test_accuracies = []
 
-    def _evaluate(self, x1, x2, labels, batch_size=100):
-        batch_helper = BatchHelper(x1, x2, labels, batch_size)
-        num_batches = len(x1) // batch_size
+    def _evaluate(self, x, labels, batch_size=100):
+        batch_helper = BatchHelper(x, labels, batch_size)
+        num_batches = len(x) // batch_size
         accuracy = 0.0
         for batch in range(num_batches):
-            x1_batch, x2_batch, y_batch = batch_helper.next(batch)
-            feed_dict = {self._model.x1: x1_batch,
-                         self._model.x2: x2_batch,
+            x1_batch, y_batch = batch_helper.next(batch)
+            feed_dict = {self._model.x: x_batch,
                          self._model.is_training: False,
                          self._model.labels: y_batch}
             accuracy += self._session.run(self._model.accuracy, feed_dict=feed_dict)
         accuracy /= num_batches
         return accuracy
 
-    def evaluate_dev(self, x1, x2, labels):
-        dev_accuracy = self._evaluate(x1, x2, labels)
+    def evaluate_dev(self, x, labels):
+        dev_accuracy = self._evaluate(x, labels)
         self.dev_accuracies.append(dev_accuracy)
         return dev_accuracy
 
-    def evaluate_test(self, x1, x2, labels):
-        test_accuracy = self._evaluate(x1, x2, labels)
+    def evaluate_test(self, x, labels):
+        test_accuracy = self._evaluate(x, labels)
         self.test_accuracies.append(test_accuracy)
         return test_accuracy
 
