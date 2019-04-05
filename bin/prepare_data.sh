@@ -45,8 +45,8 @@ function google_drive_big_file_download () {
 #wget --no-check-certificate ${QQP_DATA_TRAIN} -O ${QQP_DIR}/${QQP_FILE_TRAIN}
 #google_drive_big_file_download ${QQP_TEST_ID} ${QQP_DIR}/${QQP_FILE_TEST}
 
-wget ${BOT_TRAINLINK} -O ${Bot_DIR}/${BOT_TRAINFILE}
-wget ${BOT_DEVLINK} -O ${Bot_DIR}/${BOT_DEVFILE}
+wget ${BOT_TRAINLINK} -O ${BOT_DIR}/${BOT_TRAINFILE}
+wget ${BOT_DEVLINK} -O ${BOT_DIR}/${BOT_DEVFILE}
 wget ${GENDER_TRAINLINK} -O ${GENDER_DIR}/${GENDER_TRAINFILE}
 wget ${GENDER_DEVLINK} -O ${GENDER_DIR}/${GENDER_DEVFILE}
 
