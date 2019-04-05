@@ -10,12 +10,12 @@ logger.setLevel(logging.INFO)
 
 class DatasetVectorizer:
 
-    def __init__(self, raw_sentence_pairs, model_dir, save_vocab=True):
+    def __init__(self, raw_sentence, model_dir, save_vocab=True):
         os.makedirs(model_dir, exist_ok=True)
-        raw_sentence_pairs = raw_sentence_pairs.ravel()
-        raw_sentence_pairs = [str(x) for x in list(raw_sentence_pairs)]
-        self.sentences_lengths = [len(str(x).split(' ')) for x in list(raw_sentence_pairs)]
-        max_sentence_length = max(self.sentences_lengths)
+        raw_sentence = raw_sentence.ravel()
+        raw_sentence = [str(x) for x in list(raw_sentence)]
+        self.sentence_length = [len(str(x).split(' ')) for x in list(raw_sentence)]
+        max_sentence_length = max(self.sentence_length)
         self.vocabulary = VocabularyProcessor(max_sentence_length)
 
         if save_vocab:
@@ -35,21 +35,19 @@ class DatasetVectorizer:
     def vectorize(self, sentence):
         return np.array(list(self.vocabulary.transform([sentence])))
 
-    def vectorize_2d(self, raw_sentence_pairs):
-        num_instances, num_classes = raw_sentence_pairs.shape
-        raw_sentence_pairs = raw_sentence_pairs.ravel()
+    def vectorize_2d(self, raw_sentence):
+        num_instances, num_classes = raw_sentence.shape
+        raw_sentence = raw_sentence.ravel()
 
-        for i, v in enumerate(raw_sentence_pairs):
+        for i, v in enumerate(raw_sentence):
             if v is np.nan:
                 print(i, v)
 
-        vectorized_sentence_pairs = np.array(list(self.vocabulary.transform(raw_sentence_pairs)))
+        vectorized_sentence = np.array(list(self.vocabulary.transform(raw_sentence)))
 
-        vectorized_sentence_pairs = vectorized_sentence_pairs.reshape(num_instances, num_classes,
+        vectorized_sentence = vectorized_sentence.reshape(num_instances, num_classes,
                                                                       self.max_sentence_len)
 
-        vectorized_sentence1 = vectorized_sentence_pairs[:, 0, :]
-        vectorized_sentence2 = vectorized_sentence_pairs[:, 1, :]
-        return vectorized_sentence1, vectorized_sentence2
+        return vectorized_sentence
 
 
