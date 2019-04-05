@@ -4,33 +4,25 @@ import numpy as np
 import pandas as pd
 
 
-class DatasetType(Enum):
-    SNLI = 0,
-    QQP = 1
-
-
 class ColumnType(Enum):
     sentence1 = 0,
-    sentence2 = 1,
-    labels = 2
+    labels = 1
 
 
 columns = [ColumnType.sentence1.name,
-           ColumnType.sentence2.name,
            ColumnType.labels.name]
 
 
 class DatasetExperiment:
 
-    def __init__(self, dev_ratio=0.01, test_ratio=0.1):
+    def __init__(self, dev_ratio=0.3):
         self.data_dir = self._data_path()
         self.dev_ratio = dev_ratio
-        self.test_ratio = test_ratio
 
     def train_set(self):
         raise NotImplementedError
 
-    def train_set_pairs(self):
+    def train_set_text(self):
         raise NotImplementedError
 
     def train_labels(self):
@@ -39,7 +31,7 @@ class DatasetExperiment:
     def dev_set(self):
         raise NotImplementedError
 
-    def dev_set_pairs(self):
+    def dev_set_text(self):
         raise NotImplementedError
 
     def dev_labels(self):
@@ -48,7 +40,7 @@ class DatasetExperiment:
     def test_set(self):
         raise NotImplementedError
 
-    def test_set_pairs(self):
+    def test_set_text(self):
         raise NotImplementedError
 
     def test_labels(self):
@@ -58,104 +50,121 @@ class DatasetExperiment:
         raise NotImplementedError
 
 
-class QQPDataset(DatasetExperiment):
+class BotDataset(DatasetExperiment):
 
     def __init__(self, *args):
         super().__init__(*args)
-        dataset = pd.read_csv('{}{}'.format(self.data_dir, 'train.csv'),
+        
+        self.train = pd.read_csv('{}{}'.format(self.data_dir, 'dataTrainBot.csv'),
                               sep=',',
-                              usecols=['question1', 'question2', 'is_duplicate'])
+                              usecols=['Text', 'Human'])
+        
+        self.test = pd.read_csv('{}{}'.format(self.data_dir, 'dataDevBot.csv'),
+                              sep=',',
+                              usecols=['Text', 'Human'])
+        
+        dataset = pd.read_csv('{}{}'.format(self.data_dir, 'dataDevBot.csv'),
+                              sep=',',
+                              usecols=['Text', 'Human'])
+        
         dataset.dropna(inplace=True)
         dataset = dataset.sample(frac=1, random_state=1).reset_index(drop=True)
         num_instances = len(dataset)
-        self.num_train = num_instances * (1 - self.dev_ratio - self.test_ratio)
         self.num_dev = num_instances * self.dev_ratio
-        self.num_test = num_instances * self.test_ratio
-        self.train = dataset.loc[:self.num_train]
-        self.dev = dataset.loc[self.num_train:self.num_train + self.num_dev]
-        self.test = dataset.loc[self.num_train + self.num_dev:self.num_train + self.num_dev + self.num_test]
+        self.dev = dataset.loc[:self.num_dev]
+        
 
     def train_set(self):
         return self.train
 
-    def train_set_pairs(self):
-        return self.train[['question1', 'question2']].as_matrix()
+    def train_set_text(self):
+        return self.train['Text'].as_matrix()
 
     def train_labels(self):
-        return self.train['is_duplicate'].as_matrix()
+        return self.train['Human'].as_matrix()
 
     def dev_set(self):
         return self.dev
 
-    def dev_set_pairs(self):
-        return self.dev[['question1', 'question2']].as_matrix()
+    def dev_set_text(self):
+        return self.dev['Text'].as_matrix()
 
     def dev_labels(self):
-        return self.dev['is_duplicate'].as_matrix()
+        return self.dev['Human'].as_matrix()
 
     def test_set(self):
         return self.test
 
-    def test_set_pairs(self):
-        return self.test[['question1', 'question2']].as_matrix()
+    def test_set_text(self):
+        return self.test['Text'].as_matrix()
 
     def test_labels(self):
-        return self.test['is_duplicate'].as_matrix()
+        return self.test['Human'].as_matrix()
 
     def _data_path(self):
-        return 'corpora/QQP/'
+        return 'corpora/Bot/'
 
 
-class SNLIDataset(DatasetExperiment):
+    
+class GenderDataset(DatasetExperiment):
 
     def __init__(self, *args):
         super().__init__(*args)
-        dataset = pd.read_csv('{}{}'.format(self.data_dir, 'train_snli.txt'),
-                              delimiter='\t', header=None, names=columns, na_values='')
+        
+        self.train = pd.read_csv('{}{}'.format(self.data_dir, 'dataTrainGender.csv'),
+                              sep=',',
+                              usecols=['Text', 'Male'])
+        
+        self.test = pd.read_csv('{}{}'.format(self.data_dir, 'dataDevGender.csv'),
+                              sep=',',
+                              usecols=['Text', 'Male'])
+        
+        dataset = pd.read_csv('{}{}'.format(self.data_dir, 'dataDevGender.csv'),
+                              sep=',',
+                              usecols=['Text', 'Male'])
+        
         dataset.dropna(inplace=True)
         dataset = dataset.sample(frac=1, random_state=1).reset_index(drop=True)
         num_instances = len(dataset)
-        self.num_train = num_instances * (1 - self.dev_ratio - self.test_ratio)
         self.num_dev = num_instances * self.dev_ratio
-        self.num_test = num_instances * self.test_ratio
-        self.train = dataset.loc[:self.num_train]
-        self.dev = dataset.loc[self.num_train:self.num_train + self.num_dev]
-        self.test = dataset.loc[self.num_train + self.num_dev:self.num_train + self.num_dev + self.num_test]
+        self.dev = dataset.loc[:self.num_dev]
+        
 
     def train_set(self):
         return self.train
 
-    def train_set_pairs(self):
-        return self.train[[ColumnType.sentence1.name, ColumnType.sentence2.name]].as_matrix()
+    def train_set_text(self):
+        return self.train['Text'].as_matrix()
 
     def train_labels(self):
-        return self.train[ColumnType.labels.name].as_matrix()
+        return self.train['Male'].as_matrix()
 
     def dev_set(self):
         return self.dev
 
-    def dev_set_pairs(self):
-        return self.dev[[ColumnType.sentence1.name, ColumnType.sentence2.name]].as_matrix()
+    def dev_set_text(self):
+        return self.dev['Text'].as_matrix()
 
     def dev_labels(self):
-        return self.dev[ColumnType.labels.name].as_matrix()
+        return self.dev['Male'].as_matrix()
 
     def test_set(self):
         return self.test
 
-    def test_set_pairs(self):
-        return self.test[[ColumnType.sentence1.name, ColumnType.sentence2.name]].as_matrix()
+    def test_set_text(self):
+        return self.test['Text'].as_matrix()
 
     def test_labels(self):
-        return self.test[ColumnType.labels.name].as_matrix()
+        return self.test['Male'].as_matrix()
 
     def _data_path(self):
-        return 'corpora/SNLI/'
+        return 'corpora/Gender/'
+
 
 
 DATASETS = {
-    DatasetType.QQP.name: QQPDataset,
-    DatasetType.SNLI.name: SNLIDataset
+    DatasetType.Bot.name: BotDataset,
+    DatasetType.Gender.name: GenderDataset
 }
 
 
@@ -163,9 +172,9 @@ class Dataset:
 
     def __init__(self, vectorizer, dataset, batch_size):
 
-        self.train_sen1, self.train_sen2 = vectorizer.vectorize_2d(dataset.train_set_pairs())
-        self.dev_sen1, self.dev_sen2 = vectorizer.vectorize_2d(dataset.dev_set_pairs())
-        self.test_sen1, self.test_sen2 = vectorizer.vectorize_2d(dataset.test_set_pairs())
+        self.train_sen = vectorizer.vectorize_2d(dataset.train_set_text())
+        self.dev_sen = vectorizer.vectorize_2d(dataset.dev_set_text())
+        self.test_sen = vectorizer.vectorize_2d(dataset.test_set_text())
         self.num_tests = len(dataset.test_set())
         self._train_labels = dataset.train_labels()
         self._dev_labels = dataset.dev_labels()
@@ -176,22 +185,21 @@ class Dataset:
     def train_instances(self, shuffle=False):
         if shuffle:
             self.__shuffle_train_idxs = np.random.permutation(range(len(self.__shuffle_train_idxs)))
-            self.train_sen1 = self.train_sen1[self.__shuffle_train_idxs]
-            self.train_sen2 = self.train_sen2[self.__shuffle_train_idxs]
+            self.train_sen = self.train_sen[self.__shuffle_train_idxs]
             self._train_labels = self._train_labels[self.__shuffle_train_idxs]
-        return self.train_sen1, self.train_sen2
+        return self.train_sen
 
     def train_labels(self):
         return self._train_labels
 
     def test_instances(self):
-        return self.test_sen1, self.test_sen2
+        return self.test_sen
 
     def test_labels(self):
         return self._test_labels
 
     def dev_instances(self):
-        return self.dev_sen1, self.dev_sen2, self._dev_labels
+        return self.dev_sen, self._dev_labels
 
     def num_dev_instances(self):
         return len(self._dev_labels)
@@ -200,7 +208,7 @@ class Dataset:
         train_idxs = np.arange(len(self._train_labels))
         np.random.shuffle(train_idxs)
         train_idxs = train_idxs[:self.num_dev_instances()]
-        return self.train_sen1[train_idxs], self.train_sen2[train_idxs], self._train_labels[train_idxs]
+        return self.train_sen[train_idxs], self._train_labels[train_idxs]
 
     def __str__(self):
         return 'Dataset properties:\n ' \
