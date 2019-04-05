@@ -3,6 +3,10 @@ from enum import Enum
 import numpy as np
 import pandas as pd
 
+class DatasetType(Enum):
+    Bot = 0,
+    Gender = 1
+
 
 class ColumnType(Enum):
     sentence1 = 0,
