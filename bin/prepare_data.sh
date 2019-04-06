@@ -4,15 +4,24 @@ SNLI_ID=1wkAjMu-Pqnm1l-92M7UEp5YEtT1cFgVz
 QQP_TRAIN_ID=1dnck-CCIyx8y2xg1vwFzcwXieZJB7ERC
 QQP_TEST_ID=1XD-HxzUCTHrzhfvIXOlgqN_MWiiAqM8h
 
+BOT_TRAIN_ID=1unxuYa3-6ZrS4W1HLeg0gfqzIYHLVNN1
+BOT_DEV_ID=1EtcJmW4qattUEm1RZ8hUfIbCQVViVo53
+GENDER_TRAIN_ID=1XdDRLCprBPmu-dXZKAzTrl6V2OIcXFoX
+GENDER_DEV_ID=1pXy9qD7serdcQzbr9yJgXGytyHf2tflM
+
+
+https://drive.google.com/uc?id=1unxuYa3-6ZrS4W1HLeg0gfqzIYHLVNN1&export=download
+
+
 SNLI_DATA=${SNLI_DATA:-https://drive.google.com/uc?export=download&id=${SNLI_ID}}
 QQP_DATA_TRAIN=${QQP_DATA_TRAIN:-https://drive.google.com/uc?export=download&id=${QQP_TRAIN_ID}}
 QQP_DATA_TEST=${QQP_DATA_TEST:-https://drive.google.com/uc?export=download&id=${QQP_TEST_ID}}
 
 
-BOT_TRAINLINK=${BOT_TRAINLINK:-https://drive.google.com/file/d/1unxuYa3-6ZrS4W1HLeg0gfqzIYHLVNN1/view?usp=sharing}
-BOT_DEVLINK=${BOT_DEVLINK:-https://drive.google.com/file/d/1EtcJmW4qattUEm1RZ8hUfIbCQVViVo53/view?usp=sharing}
-GENDER_DEVLINK=${GENDER_DEVLINK:-https://drive.google.com/file/d/1pXy9qD7serdcQzbr9yJgXGytyHf2tflM/view?usp=sharing}
-GENDER_TRAINLINK=${GENDER_TRAINLINK:-https://drive.google.com/file/d/1XdDRLCprBPmu-dXZKAzTrl6V2OIcXFoX/view?usp=sharing}
+BOT_TRAIN_DATA=${BOT_TRAINLINK:-https://drive.google.com/file/d/1unxuYa3-6ZrS4W1HLeg0gfqzIYHLVNN1/view?usp=sharing}
+BOT_DEV_DATA=${BOT_DEVLINK:-https://drive.google.com/file/d/1EtcJmW4qattUEm1RZ8hUfIbCQVViVo53/view?usp=sharing}
+GENDER_DEV_DATA=${GENDER_DEVLINK:-https://drive.google.com/file/d/1pXy9qD7serdcQzbr9yJgXGytyHf2tflM/view?usp=sharing}
+GENDER_TRAIN_DATA=${GENDER_TRAINLINK:-https://drive.google.com/file/d/1XdDRLCprBPmu-dXZKAzTrl6V2OIcXFoX/view?usp=sharing}
 
 BOT_DIR=Bot
 GENDER_DIR=Gender
