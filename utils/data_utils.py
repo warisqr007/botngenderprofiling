@@ -37,6 +37,7 @@ class DatasetVectorizer:
 
     def vectorize_2d(self, raw_sentence):
         #num_instances, num_classes = raw_sentence.shape
+        num_instances = raw_sentence.shape
         raw_sentence = raw_sentence.ravel()
 
         for i, v in enumerate(raw_sentence):
