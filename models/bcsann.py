@@ -29,7 +29,7 @@ class AttentionSCnn(BaseSiameseNet):
         
     def _conv_pad(self, values):
         with tf.name_scope('convolutional_padding'):
-            pad = tf.zeros([tf.shape(self.x1)[0], 1, self.embedding_size])
+            pad = tf.zeros([tf.shape(self.x)[0], 1, self.embedding_size])
             return tf.concat([pad, values, pad], axis=1)
         
             
