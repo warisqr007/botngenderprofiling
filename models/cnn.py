@@ -4,6 +4,7 @@ from layers.similarity import manhattan_similarity
 from models.base_model import BaseSiameseNet
 from utils.config_helpers import parse_list
 from layers.basics import dropout
+import tensorflow as tf
 
 
 class CnnSiameseNet(BaseSiameseNet):
@@ -15,18 +16,15 @@ class CnnSiameseNet(BaseSiameseNet):
         num_filters = parse_list(model_cfg['PARAMS']['num_filters'])
         filter_sizes = parse_list(model_cfg['PARAMS']['filter_sizes'])
 
-        out1 = cnn_layers(self.embedded_x1,
+        out = cnn_layers(self.embedded_x,
                           sequence_len,
                           num_filters=num_filters,
                           filter_sizes=filter_sizes)
 
-        out2 = cnn_layers(self.embedded_x2,
-                          sequence_len,
-                          num_filters=num_filters,
-                          filter_sizes=filter_sizes,
-                          reuse=True)
-
-        out1 = dropout(out1, self.is_training)
-        out2 = dropout(out2, self.is_training)
-
-        return manhattan_similarity(out1, out2)
+        
+        with tf.name_scope('classifier'):
+            L1 = tf.layers.dropout(
+                tf.layers.dense(out, 100, activation=tf.nn.relu, name='L1'),
+                rate=self.dropout, training=self.is_training)
+            y = tf.layers.dense(L1, 1, activation=tf.nn.softmax, name='y')
+        return y
