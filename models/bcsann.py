@@ -63,9 +63,12 @@ class AttentionSCnn(BaseSiameseNet):
         
             
         with tf.name_scope('attention_layer'):
-            num_blocks = model_cfg['PARAMS'].getint('num_blocks')
-            num_heads = model_cfg['PARAMS'].getint('num_heads')
-            use_residual = model_cfg['PARAMS'].getboolean('use_residual')
+            #num_blocks = model_cfg['PARAMS'].getint('num_blocks')
+            #num_heads = model_cfg['PARAMS'].getint('num_heads')
+            #use_residual = model_cfg['PARAMS'].getboolean('use_residual')
+            num_blocks = 2
+            num_heads = 8
+            use_residual = False
             self.out, self.debug = stacked_multihead_attention(self._X_conv,
                                                        num_blocks=num_blocks,
                                                        num_heads=num_heads,
