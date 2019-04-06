@@ -37,7 +37,7 @@ class DatasetVectorizer:
 
     def vectorize_2d(self, raw_sentence):
         #num_instances, num_classes = raw_sentence.shape
-        num_instances = raw_sentence.shape
+        num_instances = raw_sentence.shape[0]
         num_classes = 1
         raw_sentence = raw_sentence.ravel()
 
@@ -47,8 +47,7 @@ class DatasetVectorizer:
 
         vectorized_sentence = np.array(list(self.vocabulary.transform(raw_sentence)))
 
-        vectorized_sentence = vectorized_sentence.reshape(num_instances, num_classes,
-                                                          self.max_sentence_len)
+        vectorized_sentence = vectorized_sentence.reshape(num_instances, num_classes, self.max_sentence_len)
 
         return vectorized_sentence[:, 0, :]
 
