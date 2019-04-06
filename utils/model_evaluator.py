@@ -16,7 +16,7 @@ class ModelEvaluator:
         num_batches = len(x) // batch_size
         accuracy = 0.0
         for batch in range(num_batches):
-            x1_batch, y_batch = batch_helper.next(batch)
+            x_batch, y_batch = batch_helper.next(batch)
             feed_dict = {self._model.x: x_batch,
                          self._model.is_training: False,
                          self._model.labels: y_batch}
