@@ -9,7 +9,7 @@ import tensorflow as tf
 import numpy as np
 
 _conv_projection_size = 64
-_attention_output_size = 200
+_attention_output_size = 100
 _comparison_output_size = 100
 
 class AttentionSCnn(BaseSiameseNet):
@@ -59,25 +59,18 @@ class AttentionSCnn(BaseSiameseNet):
             )
             
             self._X_conv = tf.layers.dropout(X_conv_2, rate=self.dropout, training=self.is_training)
-            
         
             
-        with tf.name_scope('attention_layer'):
-            #num_blocks = model_cfg['PARAMS'].getint('num_blocks')
-            #num_heads = model_cfg['PARAMS'].getint('num_heads')
-            #use_residual = model_cfg['PARAMS'].getboolean('use_residual')
-            num_blocks = 2
-            num_heads = 8
-            use_residual = False
-            self.out, self.debug = stacked_multihead_attention(self._X_conv,
-                                                       num_blocks=num_blocks,
-                                                       num_heads=num_heads,
-                                                       use_residual=use_residual,
-                                                       is_training=self.is_training)
+        with tf.name_scope('self_attention'):
+            e_X = tf.layers.dense(self._X_conv, _attention_output_size, activation=tf.nn.relu, name='attention_nn')
+            
+            e = tf.matmul(e_X, e_X, transpose_b=True, name='e')
+            
+            self.alfa = tf.matmul(self._masked_softmax(e, sequence_len), self._X_conv, name='alfa') 
             
         with tf.name_scope('comparison_layer'):
             X_comp = tf.layers.dense(
-                tf.concat([self._X_conv, self.out], 2),
+                tf.concat([self._X_conv, self.alfa], 2),
                 _comparison_output_size,
                 activation=tf.nn.relu,
                 name='comparison_nn'
