@@ -19,7 +19,7 @@ columns = [ColumnType.sentence1.name,
 
 class DatasetExperiment:
 
-    def __init__(self, dev_ratio=0.1):
+    def __init__(self, dev_ratio=0.01):
         self.data_dir = self._data_path()
         self.dev_ratio = dev_ratio
 
