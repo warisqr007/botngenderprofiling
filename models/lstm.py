@@ -15,10 +15,11 @@ class LSTMBasedSiameseNet(BaseSiameseNet):
         hidden_size = model_cfg['PARAMS'].getint('hidden_size')
         cell_type = model_cfg['PARAMS'].get('cell_type')
 
-        outputs_sen1 = rnn_layer(self.embedded_x1, hidden_size, cell_type)
-        outputs_sen2 = rnn_layer(self.embedded_x2, hidden_size, cell_type, reuse=True)
-
-        out1 = tf.reduce_mean(outputs_sen1, axis=1)
-        out2 = tf.reduce_mean(outputs_sen2, axis=1)
-
-        return manhattan_similarity(out1, out2)
+        outputs_sen = rnn_layer(self.embedded_x, hidden_size, cell_type)
+        
+        with tf.name_scope('classifier'):
+            L1 = tf.layers.dropout(
+                tf.layers.dense(outputs_sen, 100, activation=tf.nn.relu, name='L1'),
+                rate=self.dropout, training=self.is_training)
+            y = tf.layers.dense(L1, 1, activation=tf.nn.softmax, name='y')
+        return y
